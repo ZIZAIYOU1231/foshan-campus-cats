@@ -175,7 +175,7 @@ input,textarea{font:inherit}
           <span class="eyebrow">每日排行 · TOP 5</span>
           <h2>今日点赞榜</h2>
         </div>
-        <span class="mono" style="color:var(--muted);font-size:12px">按当天新增点赞排名 · 每日更新</span>
+        <span class="mono" id="netStatus" style="color:var(--muted);font-size:12px">正在连接云端…</span>
       </div>
       <div class="board" id="board"></div>
     </div>
@@ -228,7 +228,7 @@ input,textarea{font:inherit}
       <div class="feed" id="feed"></div>
       <div class="notice">
         <b>数据说明</b>
-        当前版本数据保存在你自己的浏览器本地（localStorage），换设备或清除浏览器数据后不会同步。要实现“所有人共享、实时互通”的朋友圈，需要接入后端云服务（如 Supabase / Firebase / 云函数数据库）——在 GitHub Pages 静态托管上无法直接完成。示例帖子中的照片与点赞为演示数据。
+        本页已接入 Supabase 云数据库：所有人看到的帖子、点赞、评论都是同一份共享数据，每 30 秒自动刷新。图片会在发布时压缩到最长 900px 的 JPEG 后存入云端。点赞按「当天新增点赞数」参与今日榜单排名，每日自动重新计票。请友善发言，内容对所有访问者公开可见。
       </div>
     </div>
   </section>
@@ -248,108 +248,78 @@ input,textarea{font:inherit}
 <script>
 (function () {
   "use strict";
-  var KEY = "fsu-cat-moments-v1";
+  var SB_URL = "https://bvyhbylqusyihqjcwyfe.supabase.co";
+  var SB_KEY = "sb_publishable_vCWg-WwuV77JPDWCyIR1OQ_9b-HL0oU";
   var meKey = "fsu-cat-moments-me";
   var likedKey = "fsu-cat-moments-liked";
-
-  /* ---------- guarded storage ---------- */
-  var mem = {};
-  function load(k) {
-    try { return JSON.parse(localStorage.getItem(k) || "null") || mem[k] || null; }
-    catch (e) { return mem[k] || null; }
-  }
-  function save(k, v) {
-    mem[k] = v;
-    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode fallback */ }
-  }
 
   function today() {
     var d = new Date();
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   }
-  function fmtTime(ts) {
-    var d = new Date(ts), now = Date.now(), diff = now - ts;
+  function fmtTime(iso) {
+    var d = new Date(iso), now = Date.now(), ts = d.getTime(), diff = now - ts;
     if (diff < 60e3) return "刚刚";
     if (diff < 3600e3) return Math.floor(diff / 60e3) + " 分钟前";
     if (d.toDateString() === new Date().toDateString()) return "今天 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
-    var m = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    return m === today() ? "今天" : m + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0") + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
   }
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
   }
+  function mem(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || "null"); localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} return null; }
+  var liked = mem(likedKey) || {};
 
-  /* ---------- sample seed "photos": original inline SVG data URIs (示例数据) ---------- */
-  function catPhoto(base, dark, bg, pose) {
-    var extra = "";
-    if (pose === 2) extra = '<rect x="40" y="180" width="400" height="26" fill="' + dark + '" opacity=".5"/>';
-    if (pose === 3) extra = '<circle cx="420" cy="80" r="42" fill="var(--x,#ffd43b)"/>'.replace('var(--x,#ffd43b)', bg);
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400">' +
-      '<rect width="520" height="400" fill="' + bg + '"/>' + extra +
-      '<polygon points="150,150 165,55 235,120" fill="' + base + '" stroke="#11110f" stroke-width="9"/>' +
-      '<polygon points="370,150 355,55 285,120" fill="' + base + '" stroke="#11110f" stroke-width="9"/>' +
-      '<ellipse cx="260" cy="230" rx="150" ry="128" fill="' + base + '" stroke="#11110f" stroke-width="9"/>' +
-      '<ellipse cx="205" cy="215" rx="26" ry="30" fill="#fffdf7" stroke="#11110f" stroke-width="7"/>' +
-      '<ellipse cx="315" cy="215" rx="26" ry="30" fill="#fffdf7" stroke="#11110f" stroke-width="7"/>' +
-      '<circle cx="205" cy="217" r="14" fill="#11110f"/><circle cx="315" cy="217" r="14" fill="#11110f"/>' +
-      '<circle cx="200" cy="211" r="4.5" fill="#fffdf7"/><circle cx="310" cy="211" r="4.5" fill="#fffdf7"/>' +
-      '<polygon points="260,252 278,252 269,264" fill="#ff6ca8" stroke="#11110f" stroke-width="5"/>' +
-      '<path d="M269 264 q-18 20 -38 2 M269 264 q18 20 38 2" fill="none" stroke="#11110f" stroke-width="6" stroke-linecap="round"/>' +
-      '<path d="M140 245 l-70 -14 M138 266 l-74 0 M142 286 l-66 15" stroke="#11110f" stroke-width="5" stroke-linecap="round" opacity=".8"/>' +
-      '<path d="M380 245 l70 -14 M382 266 l74 0 M378 286 l66 15" stroke="#11110f" stroke-width="5" stroke-linecap="round" opacity=".8"/>' +
-      '</svg>';
-    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  /* ---------- Supabase REST helpers (no SDK, plain fetch) ---------- */
+  function sbGet() {
+    return fetch(SB_URL + "/rest/v1/posts?select=*&order=created_at.desc&limit=100", {
+      headers: { apikey: SB_KEY }
+    }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
   }
-
-  var t = today();
-  var nowBase = Date.now();
-  function ts(hoursAgo) { return nowBase - hoursAgo * 3600e3; }
-
-  var seed = [
-    { id: "s1", nick: "图图同学", text: "图书馆三楼窗台又蹲到管理员本喵了！今天阳光正好，谁路过谁来吸猫。", img: catPhoto("#e8842b", "#b95f16", "#f0dcb4", 1), ts: ts(2), likesByDay: ({}), comments: [{ nick: "小鱼干", text: "已吸，毛超软！", ts: ts(1.5) }] },
-    { id: "s2", nick: "饭堂干饭王", text: "第一饭堂门口的芝麻糊今天翻了个肚皮，营业状态满分。", img: catPhoto("#3a3733", "#26241f", "#fff4df", 2), ts: ts(5), likesByDay: ({}), comments: [] },
-    { id: "s3", nick: "阿湖", text: "湖心亭的布丁蹲了一下午鱼，可惜一条没捞着哈哈哈哈。", img: catPhoto("#e8842b", "#b95f16", "#d8ecf7", 3), ts: ts(9), likesByDay: ({}), comments: [{ nick: "图图同学", text: "它锲而不舍的样子太可爱了" }] },
-    { id: "s4", nick: "田径队小狗", text: "晚上跑完步在运动场偶遇了传说中的黑影乌云，速度真的快到拍不清。", img: catPhoto("#11110f", "#000000", "#3a3733", 2), ts: ts(26), likesByDay: ({}), comments: [] },
-    { id: "s5", nick: "宿舍6楼阿姨", text: "楼下的奶盖又准时来查岗了，喵喵催饭的功力一天比一天强。", img: catPhoto("#f7f3ea", "#dcd6c8", "#ffd9e6", 1), ts: ts(30), likesByDay: ({}), comments: [] }
-  ];
-  seed.forEach(function (p, i) { p.likesByDay[t] = [12, 9, 7, 5, 3][i] || 0; });
+  function sbInsert(row) {
+    return fetch(SB_URL + "/rest/v1/posts", {
+      method: "POST",
+      headers: { apikey: SB_KEY, "Content-Type": "application/json", Prefer: "return=representation" },
+      body: JSON.stringify(row)
+    }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+  }
+  function sbPatch(id, patch) {
+    return fetch(SB_URL + "/rest/v1/posts?id=eq." + encodeURIComponent(id), {
+      method: "PATCH",
+      headers: { apikey: SB_KEY, "Content-Type": "application/json", Prefer: "return=representation" },
+      body: JSON.stringify(patch)
+    }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+  }
 
   /* ---------- state ---------- */
-  var state = load(KEY);
-  if (!state || !Array.isArray(state.posts)) state = { posts: seed, day: t };
-  if (state.day !== t) state = { posts: state.posts, day: t }; // keep posts, ranking naturally resets by day key
-  var me = load(meKey) || "";
-  var liked = load(likedKey) || {};
-  var firstRun = !load(KEY);
-  if (firstRun) save(KEY, state);
+  var posts = [];
+  var me = mem(meKey) || "";
+  var loading = true;
+  var netErr = "";
 
-  function persist() { save(KEY, state); }
-
-  function likesToday(p) { return (p.likesByDay && p.likesByDay[t]) || 0; }
-  function totalLikes(p) {
-    var s = 0; for (var k in (p.likesByDay || {})) s += p.likesByDay[k]; return s;
-  }
+  var t = today();
+  function likesToday(p) { return (p.board_date === t) ? (p.likes_today || 0) : 0; }
+  function totalLikes(p) { return p.likes || 0; }
   function commentCount(p) { return (p.comments || []).length; }
 
-  /* ---------- render ---------- */
   var $ = function (sel) { return document.querySelector(sel); };
   var feedEl = $("#feed"), boardEl = $("#board");
 
   function ordered() {
-    var arr = state.posts.slice();
+    var arr = posts.slice();
     var ranked = arr.filter(function (p) { return likesToday(p) > 0; })
-      .sort(function (a, b) { return likesToday(b) - likesToday(a) || b.ts - a.ts; })
+      .sort(function (a, b) { return likesToday(b) - likesToday(a) || new Date(b.created_at) - new Date(a.created_at); })
       .slice(0, 5);
     var rankIds = {};
     ranked.forEach(function (p) { rankIds[p.id] = true; });
     var rest = arr.filter(function (p) { return !rankIds[p.id]; })
-      .sort(function (a, b) { return b.ts - a.ts; });
+      .sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
     return { ranked: ranked, rest: rest };
   }
 
   function avatarColor(nick) {
     var colors = ["#ffd43b", "#ff6ca8", "#a3e635", "#6fb0d8", "#e3b587"];
-    var h = 0; for (var i = 0; i < nick.length; i++) h = (h * 31 + nick.charCodeAt(i)) >>> 0;
+    var h = 0; for (var i = 0; i < (nick || "").length; i++) h = (h * 31 + nick.charCodeAt(i)) >>> 0;
     return colors[h % colors.length];
   }
 
@@ -362,16 +332,16 @@ input,textarea{font:inherit}
     var cEmpty = commentCount(p) ? "" : '<p class="comments-empty">还没有评论，来抢沙发。</p>';
     return '<article class="post" data-id="' + esc(p.id) + '">' +
       '<div class="post-head">' +
-      '<span class="p-avatar" style="background:' + avatarColor(p.nick) + '">' + esc(p.nick.slice(0, 1)) + '</span>' +
-      '<div><p class="p-name">' + esc(p.nick) + '</p><p class="p-meta">' + fmtTime(p.ts) + '</p></div>' +
+      '<span class="p-avatar" style="background:' + avatarColor(p.nick) + '">' + esc((p.nick || "?").slice(0, 1)) + '</span>' +
+      '<div><p class="p-name">' + esc(p.nick) + '</p><p class="p-meta">' + fmtTime(p.created_at) + '</p></div>' +
       rankPill + '</div>' +
-      '<div class="post-body"><p class="ptext">' + esc(p.text) + '</p>' +
-      (p.img ? '<div class="post-img"><img src="' + p.img + '" alt="' + esc(p.nick) + ' 发布的猫咪照片"></div>' : "") +
+      '<div class="post-body"><p class="ptext">' + esc(p.body || "") + '</p>' +
+      (p.img ? '<div class="post-img"><img loading="lazy" src="' + p.img + '" alt="' + esc(p.nick) + ' 发布的猫咪照片"></div>' : "") +
       '</div>' +
       '<div class="post-actions">' +
       '<button class="act ' + (my ? "liked" : "") + '" data-act="like" aria-pressed="' + my + '">' +
       '<svg viewBox="0 0 24 24" fill="' + (my ? "currentColor" : "none") + '" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>' +
-      '<span>' + (totalLikes(p)) + '</span></button>' +
+      '<span>' + totalLikes(p) + '</span></button>' +
       '<button class="act" data-act="cmt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.9A8 8 0 1 1 21 12Z"/></svg>评论 ' + commentCount(p) + '</button>' +
       '</div>' +
       '<div class="comments">' + cEmpty + cs +
@@ -380,43 +350,55 @@ input,textarea{font:inherit}
   }
 
   function render() {
-    var o = ordered();
-    // board
-    if (o.ranked.length) {
-      boardEl.innerHTML = o.ranked.map(function (p, i) {
-        return '<div class="slot"><span class="rk">' + (i + 1) + '</span><img src="' + p.img + '" alt="' + esc(p.nick) + ' 的照片">' +
-          '<div class="bi"><b>' + esc(p.nick) + '</b><span>今日 ' + likesToday(p) + ' 赞</span></div></div>';
-      }).join("");
-    } else {
-      boardEl.innerHTML = '<div class="board-empty">今日还没有点赞，点一颗小心心，榜单马上开始排名。</div>';
+    if (loading) {
+      boardEl.innerHTML = '<div class="board-empty">正在连接云端，加载喵友动态…</div>';
+      feedEl.innerHTML = "";
+      return;
     }
-    // feed: ranked posts shown with rank pill, then rest
-    var html = o.ranked.map(function (p, i) { return postHTML(p, i + 1); }).join("") +
+    if (netErr) {
+      boardEl.innerHTML = '<div class="board-empty">云端连接失败：' + esc(netErr) + '。请稍后刷新重试。</div>';
+      feedEl.innerHTML = "";
+      return;
+    }
+    var o = ordered();
+    boardEl.innerHTML = o.ranked.length
+      ? o.ranked.map(function (p, i) {
+          return '<div class="slot"><span class="rk">' + (i + 1) + '</span><img loading="lazy" src="' + p.img + '" alt="' + esc(p.nick) + ' 的照片" onerror="this.style.display=\'none\'">' +
+            '<div class="bi"><b>' + esc(p.nick) + '</b><span>今日 ' + likesToday(p) + ' 赞</span></div></div>';
+        }).join("")
+      : '<div class="board-empty">今日还没有点赞，点一颗小心心，榜单马上开始排名。</div>';
+    feedEl.innerHTML = o.ranked.map(function (p, i) { return postHTML(p, i + 1); }).join("") +
       o.rest.map(function (p) { return postHTML(p, 0); }).join("");
-    feedEl.innerHTML = html || "";
-    $("#postCount").textContent = state.posts.length;
-    $("#dayChip").textContent = "今日榜单 · " + t + " · 每天 0 点重新排名";
+    $("#postCount").textContent = posts.length;
+    $("#dayChip").textContent = "今日榜单 · " + t + " · 所有人共享同一份云端数据";
+    $("#netStatus").textContent = "已连接云端 · 实时共享";
+  }
+
+  function refresh() {
+    loading = true; netErr = ""; render();
+    sbGet().then(function (rows) { posts = rows || []; loading = false; render(); })
+      .catch(function (e) { loading = false; netErr = e.message; render(); });
   }
 
   /* ---------- interactions ---------- */
-  var pickedData = "";
-
   feedEl.addEventListener("click", function (e) {
     var post = e.target.closest(".post");
     if (!post) return;
     var id = post.getAttribute("data-id");
-    var p = state.posts.filter(function (x) { return x.id === id; })[0];
+    var p = posts.filter(function (x) { return x.id === id; })[0];
     if (!p) return;
     var act = e.target.closest("[data-act]");
     if (act && act.getAttribute("data-act") === "like") {
-      if (liked[id]) {
-        if (p.likesByDay[t]) p.likesByDay[t] = Math.max(0, p.likesByDay[t] - 1);
-        delete liked[id];
-      } else {
-        p.likesByDay[t] = (p.likesByDay[t] || 0) + 1;
-        liked[id] = true;
-      }
-      save(likedKey, liked); persist(); render();
+      if (liked[id]) return; // one like per device per post (shared data, keep simple & fair)
+      liked[id] = true; mem(likedKey, liked);
+      var patch = { likes: (p.likes || 0) + 1 };
+      if (p.board_date !== t) { patch.likes_today = 1; patch.board_date = t; }
+      else patch.likes_today = (p.likes_today || 0) + 1;
+      var btn = act; btn.disabled = true;
+      sbPatch(id, patch).then(function (rows) {
+        if (rows && rows[0]) Object.assign(p, rows[0]);
+        render();
+      }).catch(function () { btn.disabled = false; });
       return;
     }
     if (act && act.getAttribute("data-act") === "cmt") {
@@ -435,36 +417,57 @@ input,textarea{font:inherit}
     var form = e.target.closest(".cform");
     if (!form) return;
     e.preventDefault();
-    var post = e.target.closest(".post");
-    var id = post.getAttribute("data-id");
-    var p = state.posts.filter(function (x) { return x.id === id; })[0];
+    var postEl = e.target.closest(".post");
+    var id = postEl.getAttribute("data-id");
+    var p = posts.filter(function (x) { return x.id === id; })[0];
     var input = form.querySelector("input");
     var text = input.value.trim();
     if (!p || !text) return;
     var nick = me || "匿名猫友";
-    (p.comments = p.comments || []).push({ nick: nick, text: text, ts: Date.now() });
-    input.value = "";
-    persist(); render();
-    var box = document.querySelector('.post[data-id="' + id + '"] .comments');
-    if (box) { box.classList.add("open"); box.scrollIntoView({ block: "nearest" }); }
+    var next = (p.comments || []).concat([{ nick: nick, text: text, ts: new Date().toISOString() }]);
+    var btn = form.querySelector("button"); btn.disabled = true;
+    sbPatch(id, { comments: next }).then(function (rows) {
+      if (rows && rows[0]) Object.assign(p, rows[0]);
+      input.value = ""; render();
+      var box = document.querySelector('.post[data-id="' + id + '"] .comments');
+      if (box) box.classList.add("open");
+    }).catch(function () { btn.disabled = false; });
   });
 
   $("#lightbox").addEventListener("click", function () { this.setAttribute("data-open", "false"); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") $("#lightbox").setAttribute("data-open", "false"); });
 
-  /* publish */
+  /* publish with client-side image compression (canvas → JPEG ≤900px) */
   var imgInput = $("#imgInput"), preview = $("#preview");
+  var pickedData = "";
   imgInput.addEventListener("change", function () {
     var f = imgInput.files && imgInput.files[0];
-    if (!f) { pickedData = ""; preview.removeAttribute("src"); return; }
-    if (f.size > 3 * 1024 * 1024) {
-      $("#pubErr").textContent = "图片超过 3MB，请先压缩后再上传。";
+    if (!f) { pickedData = ""; preview.removeAttribute("src"); preview.style.display = "none"; return; }
+    if (f.size > 12 * 1024 * 1024) {
+      $("#pubErr").textContent = "图片超过 12MB，请换一张。";
       $("#pubErr").classList.add("show");
-      imgInput.value = ""; pickedData = ""; preview.removeAttribute("src");
-      return;
+      imgInput.value = ""; return;
     }
     var r = new FileReader();
-    r.onload = function () { pickedData = r.result; preview.src = pickedData; $("#pubErr").classList.remove("show"); };
+    r.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var max = 900;
+        var w = img.width, h = img.height;
+        if (w > max || h > max) { var s = Math.min(max / w, max / h); w = Math.round(w * s); h = Math.round(h * s); }
+        var cv = document.createElement("canvas");
+        cv.width = w; cv.height = h;
+        cv.getContext("2d").drawImage(img, 0, 0, w, h);
+        pickedData = cv.toDataURL("image/jpeg", 0.8);
+        preview.src = pickedData; preview.style.display = "block";
+        $("#pubErr").classList.remove("show");
+      };
+      img.onerror = function () {
+        $("#pubErr").textContent = "这张图片无法读取，换一张试试。";
+        $("#pubErr").classList.add("show");
+      };
+      img.src = r.result;
+    };
     r.readAsDataURL(f);
   });
 
@@ -475,19 +478,30 @@ input,textarea{font:inherit}
     var err = $("#pubErr");
     if (!nick) { err.textContent = "先给自己取个昵称吧。"; err.classList.add("show"); return; }
     if (!text && !pickedData) { err.textContent = "配一段文字或选一张猫咪照片再发布。"; err.classList.add("show"); return; }
-    me = nick; save(meKey, me);
-    state.posts.unshift({
-      id: "p" + Date.now(), nick: nick, text: text,
-      img: pickedData, ts: Date.now(), likesByDay: {}, comments: []
+    me = nick; mem(meKey, me);
+    var btn = $("#pubBtn"); btn.disabled = true; btn.textContent = "发布中…";
+    sbInsert({
+      id: "p" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+      nick: nick, body: text, img: pickedData || null,
+      likes: 0, likes_today: 0, board_date: t, comments: []
+    }).then(function () {
+      $("#text").value = ""; imgInput.value = ""; pickedData = "";
+      preview.removeAttribute("src"); preview.style.display = "none";
+      err.classList.remove("show");
+      btn.disabled = false; btn.textContent = "发布喵照";
+      refresh();
+      document.querySelector(".section-feed").scrollIntoView({ behavior: "smooth", block: "start" });
+    }).catch(function (ex) {
+      btn.disabled = false; btn.textContent = "发布喵照";
+      err.textContent = "发布失败（" + ex.message + "），请稍后重试。";
+      err.classList.add("show");
     });
-    $("#text").value = ""; imgInput.value = ""; pickedData = ""; preview.removeAttribute("src");
-    err.classList.remove("show");
-    persist(); render();
-    document.querySelector(".section-feed").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   $("#nick").value = me;
-  render();
+  $("#netStatus").textContent = "正在连接云端…";
+  refresh();
+  setInterval(refresh, 30000); // 30s 轮询，让所有人看到彼此的新帖与点赞
 })();
 
 </script>

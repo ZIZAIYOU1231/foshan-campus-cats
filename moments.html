@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>喵友圈 · 佛山大学校园猫咪图鉴</title>
+<meta name="description" content="喵友圈：发布校园猫咪照片，点赞评论互动，每日点赞前五自动上榜。">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo-black@5.2.8/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/space-grotesk@5.2.10/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/noto-sans-sc@5.2.10/index.css">
+<style>
+:root{
+  --field:#fff4df; --surface:#fffdf7; --ink:#11110f; --muted:#4d4b44;
+  --accent:#ffd43b; --pink:#ff6ca8; --ok:#2f9e44;
+  --border:3px; --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --shadow-lg:10px 10px 0 var(--ink);
+  --radius:3px; --container:1100px; --gutter:clamp(16px,4vw,40px);
+  --font-display:"Archivo Black","Noto Sans SC Variable","Arial Black",Impact,sans-serif;
+  --font-body:"Space Grotesk Variable","Noto Sans SC Variable","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-mono:"SFMono-Regular","Cascadia Code",Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--field);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{margin:0;font-family:var(--font-display);letter-spacing:-.01em;line-height:1.08}
+p{margin:0}
+input,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.container{max-width:var(--container);margin-inline:auto;padding-inline:var(--gutter)}
+.mono{font-family:var(--font-mono)}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:var(--border) solid var(--ink)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:13px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-size:18px}
+.brand .logo{width:36px;height:36px;border:var(--border) solid var(--ink);background:var(--pink);display:grid;place-items:center;box-shadow:var(--shadow-sm);color:var(--ink)}
+.brand .logo svg{width:22px;height:22px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-weight:600;font-size:14px;padding:8px 12px;border:2px solid transparent}
+.nav-links a:hover{border-color:var(--ink);background:var(--field)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border:var(--border) solid var(--ink);background:var(--surface);color:var(--ink);font-weight:700;font-size:15px;border-radius:var(--radius);box-shadow:var(--shadow-sm);transition:transform .06s,box-shadow .06s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-primary{background:var(--accent)}
+.btn-pink{background:var(--pink)}
+.btn-ghost{box-shadow:none;background:transparent;padding-inline:12px}
+.btn-ghost:hover{background:var(--field);transform:none;box-shadow:none}
+.btn-liked{background:var(--pink)}
+
+/* hero */
+.hero{padding-block:clamp(28px,5vw,54px)}
+.hero h1{font-size:clamp(30px,4.6vw,56px)}
+.hero h1 .hl{background:var(--accent);box-shadow:6px 6px 0 var(--ink);padding:0 8px;display:inline-block}
+.hero .lead{margin-top:14px;max-width:60ch;color:var(--muted);font-weight:600}
+.day-chip{display:inline-block;margin-top:16px;border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow-sm);padding:7px 12px;font-family:var(--font-mono);font-size:13px;font-weight:700}
+
+/* section */
+.section{padding-block:clamp(36px,5vw,64px);border-top:var(--border) solid var(--ink)}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.sec-head h2{font-size:clamp(24px,3.4vw,38px)}
+.sec-head .eyebrow{display:block;margin-bottom:8px}
+
+/* composer */
+.composer{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow);padding:18px;display:grid;gap:14px}
+.composer .row{display:flex;gap:12px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;flex:1 1 200px}
+.field label{font-size:13px;color:var(--muted);font-weight:700}
+.input,.textarea{width:100%;padding:11px 13px;border:2px solid var(--ink);background:var(--field);border-radius:var(--radius);font-size:15px;color:var(--ink)}
+.input:focus,.textarea:focus{outline:2px solid var(--accent)}
+.textarea{min-height:80px;resize:vertical;line-height:1.55}
+.pick{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pick input[type=file]{font-size:13px}
+.preview{width:110px;height:84px;object-fit:cover;border:var(--border) solid var(--ink);box-shadow:var(--shadow-sm);background:var(--field)}
+.pick-hint{font-size:12px;color:var(--muted)}
+.composer-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.err{color:#c92a2a;font-weight:700;font-size:13px;display:none}
+.err.show{display:block}
+
+/* ranking board */
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px}
+.board .slot{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow-sm);position:relative}
+.board .slot .rk{position:absolute;top:10px;left:10px;z-index:2;width:38px;height:38px;display:grid;place-items:center;border:var(--border) solid var(--ink);font-family:var(--font-display);font-size:19px;box-shadow:var(--shadow-sm)}
+.board .slot:nth-child(1) .rk{background:var(--accent)}
+.board .slot:nth-child(2) .rk{background:#e9e2d0}
+.board .slot:nth-child(3) .rk{background:#e3b587}
+.board .slot:nth-child(4) .rk,.board .slot:nth-child(5) .rk{background:var(--surface)}
+.board .slot img{width:100%;aspect-ratio:1/1;object-fit:cover;border-bottom:var(--border) solid var(--ink)}
+.board .slot .bi{padding:10px 12px}
+.board .slot .bi b{display:block;font-size:15px}
+.board .slot .bi span{font-size:12px;color:var(--muted);font-weight:600}
+.board-empty{border:var(--border) dashed var(--ink);background:var(--surface);padding:26px;color:var(--muted);font-weight:600}
+
+/* feed */
+.feed{display:grid;gap:24px;max-width:760px}
+.post{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow)}
+.post-head{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:var(--border) solid var(--ink)}
+.p-avatar{width:42px;height:42px;border:var(--border) solid var(--ink);display:grid;place-items:center;font-family:var(--font-display);font-size:17px;box-shadow:var(--shadow-sm);flex:0 0 auto}
+.p-name{font-weight:700;font-size:15px}
+.p-meta{font-size:12px;color:var(--muted);font-family:var(--font-mono)}
+.p-rank{margin-left:auto}
+.pill{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--ink);padding:3px 9px;font-size:12px;font-weight:700;font-family:var(--font-mono);background:var(--accent)}
+.post-body{padding:14px 16px 4px}
+.post-body .ptext{white-space:pre-wrap;overflow-wrap:anywhere}
+.post-img{margin-top:12px;border:var(--border) solid var(--ink);max-height:460px;overflow:hidden;background:var(--field)}
+.post-img img{width:100%;height:auto;max-height:460px;object-fit:cover;cursor:zoom-in}
+.post-actions{display:flex;gap:10px;padding:12px 16px;border-top:2px solid color-mix(in srgb,var(--ink) 14%,transparent);margin-top:12px;flex-wrap:wrap}
+.act{display:inline-flex;align-items:center;gap:7px;border:2px solid var(--ink);background:var(--surface);padding:7px 13px;font-size:13px;font-weight:700;border-radius:var(--radius);box-shadow:2px 2px 0 var(--ink)}
+.act:active{transform:translate(1px,1px);box-shadow:0 0 0 var(--ink)}
+.act svg{width:16px;height:16px}
+.act.liked{background:var(--pink)}
+.comments{border-top:2px solid color-mix(in srgb,var(--ink) 14%,transparent);padding:12px 16px 14px;display:none}
+.comments.open{display:block}
+.comment{font-size:14px;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent)}
+.comment b{margin-right:6px}
+.comment .cmeta{font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-left:6px}
+.cform{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.cform input{flex:1 1 200px}
+.comments-empty{font-size:13px;color:var(--muted);font-weight:600}
+
+/* lightbox */
+.lightbox{position:fixed;inset:0;z-index:90;display:none;place-items:center;padding:24px;background:color-mix(in srgb,var(--ink) 78%,transparent)}
+.lightbox[data-open="true"]{display:grid}
+.lightbox img{max-width:min(92vw,900px);max-height:88vh;border:var(--border) solid var(--surface);box-shadow:var(--shadow-lg)}
+
+/* notice + footer */
+.notice{margin-top:18px;border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow-sm);padding:13px 15px;font-size:13px;line-height:1.6}
+.notice b{display:block;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;color:var(--muted)}
+.foot{border-top:var(--border) solid var(--ink);background:var(--ink);color:var(--field);padding-block:26px;font-size:14px}
+.foot .mono{color:color-mix(in srgb,var(--field) 68%,transparent);font-size:12px}
+.foot-inner{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+
+@media (max-width:640px){
+  .nav-links{display:none}
+  .board{grid-template-columns:repeat(2,1fr)}
+  .p-rank{margin-left:0;flex-basis:100%}
+  .post-head{flex-wrap:wrap}
+}
+
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 13c0-3.2 3.6-5.2 8-5.2s8 2 8 5.2-3.6 5.2-8 5.2-8-2-8-5.2Z"/><path d="M5.5 9 6.5 4 10 7M18.5 9 17.5 4 14 7"/></svg></span>
+      喵友圈
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#rank">今日榜单</a>
+      <a href="#publish">发布喵照</a>
+      <a href="https://zizaiyou1231.github.io/foshan-campus-cats/">← 返回图鉴</a>
+    </nav>
+    <a class="btn btn-primary" href="#publish">发一张</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero container">
+    <span class="eyebrow" style="display:inline-block;border:2px solid var(--ink);background:var(--surface);padding:6px 11px;box-shadow:var(--shadow-sm);margin-bottom:18px">佛山大学 · 校园猫互助社群</span>
+    <h1>今天校园里最可爱的喵，<span class="hl">由你点赞</span>决定。</h1>
+    <p class="lead">发布你拍到的猫咪照片，给别人的猫点小心心、写下评论。每天点赞前五的照片会挂在榜单顶部，其余按最新发布排列。</p>
+    <p class="day-chip" id="dayChip">今日榜单</p>
+  </section>
+
+  <section class="section" id="rank">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">每日排行 · TOP 5</span>
+          <h2>今日点赞榜</h2>
+        </div>
+        <span class="mono" style="color:var(--muted);font-size:12px">按当天新增点赞排名 · 每日更新</span>
+      </div>
+      <div class="board" id="board"></div>
+    </div>
+  </section>
+
+  <section class="section" id="publish">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">发布 · 晒猫时间</span>
+          <h2>发一张你今天遇到的猫</h2>
+        </div>
+      </div>
+      <form class="composer" id="pubForm">
+        <div class="row">
+          <div class="field" style="flex:0 1 240px">
+            <label for="nick">你的昵称</label>
+            <input class="input" id="nick" type="text" maxlength="20" placeholder="例如：图图同学">
+          </div>
+          <div class="field">
+            <label for="text">想说的话（选填）</label>
+            <textarea class="textarea" id="text" maxlength="300" placeholder="在哪里遇到的？它在干什么？"></textarea>
+          </div>
+        </div>
+        <div class="pick">
+          <img class="preview" id="preview" alt="照片预览" style="display:none">
+          <div class="field">
+            <label for="imgInput">猫咪照片（选填，≤3MB）</label>
+            <input class="input" id="imgInput" type="file" accept="image/*">
+            <span class="pick-hint">没有照片也可以纯文字发布。</span>
+          </div>
+        </div>
+        <p class="err" id="pubErr" role="alert"></p>
+        <div class="composer-foot">
+          <span class="pick-hint">发布后：会进入信息流，收到点赞即参与今日排名。</span>
+          <button class="btn btn-pink" type="submit">发布喵照</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section section-feed">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">信息流 · 榜单在前，其余按最新</span>
+          <h2>喵友动态 <span class="mono" style="font-size:14px;color:var(--muted)">共 <span id="postCount">0</span> 条</span></h2>
+        </div>
+      </div>
+      <div class="feed" id="feed"></div>
+      <div class="notice">
+        <b>数据说明</b>
+        当前版本数据保存在你自己的浏览器本地（localStorage），换设备或清除浏览器数据后不会同步。要实现“所有人共享、实时互通”的朋友圈，需要接入后端云服务（如 Supabase / Firebase / 云函数数据库）——在 GitHub Pages 静态托管上无法直接完成。示例帖子中的照片与点赞为演示数据。
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="container foot-inner">
+    <span>喵友圈 · 佛山大学校园猫互助社群（示例项目）</span>
+    <span class="mono">每日榜单 · 本地示例数据 · <a href="https://zizaiyou1231.github.io/foshan-campus-cats/" style="text-decoration:underline">返回图鉴</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" data-open="false" role="dialog" aria-modal="true" aria-label="查看大图">
+  <img id="lightboxImg" alt="猫咪照片大图">
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "fsu-cat-moments-v1";
+  var meKey = "fsu-cat-moments-me";
+  var likedKey = "fsu-cat-moments-liked";
+
+  /* ---------- guarded storage ---------- */
+  var mem = {};
+  function load(k) {
+    try { return JSON.parse(localStorage.getItem(k) || "null") || mem[k] || null; }
+    catch (e) { return mem[k] || null; }
+  }
+  function save(k, v) {
+    mem[k] = v;
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode fallback */ }
+  }
+
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function fmtTime(ts) {
+    var d = new Date(ts), now = Date.now(), diff = now - ts;
+    if (diff < 60e3) return "刚刚";
+    if (diff < 3600e3) return Math.floor(diff / 60e3) + " 分钟前";
+    if (d.toDateString() === new Date().toDateString()) return "今天 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    var m = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    return m === today() ? "今天" : m + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
+  }
+
+  /* ---------- sample seed "photos": original inline SVG data URIs (示例数据) ---------- */
+  function catPhoto(base, dark, bg, pose) {
+    var extra = "";
+    if (pose === 2) extra = '<rect x="40" y="180" width="400" height="26" fill="' + dark + '" opacity=".5"/>';
+    if (pose === 3) extra = '<circle cx="420" cy="80" r="42" fill="var(--x,#ffd43b)"/>'.replace('var(--x,#ffd43b)', bg);
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400">' +
+      '<rect width="520" height="400" fill="' + bg + '"/>' + extra +
+      '<polygon points="150,150 165,55 235,120" fill="' + base + '" stroke="#11110f" stroke-width="9"/>' +
+      '<polygon points="370,150 355,55 285,120" fill="' + base + '" stroke="#11110f" stroke-width="9"/>' +
+      '<ellipse cx="260" cy="230" rx="150" ry="128" fill="' + base + '" stroke="#11110f" stroke-width="9"/>' +
+      '<ellipse cx="205" cy="215" rx="26" ry="30" fill="#fffdf7" stroke="#11110f" stroke-width="7"/>' +
+      '<ellipse cx="315" cy="215" rx="26" ry="30" fill="#fffdf7" stroke="#11110f" stroke-width="7"/>' +
+      '<circle cx="205" cy="217" r="14" fill="#11110f"/><circle cx="315" cy="217" r="14" fill="#11110f"/>' +
+      '<circle cx="200" cy="211" r="4.5" fill="#fffdf7"/><circle cx="310" cy="211" r="4.5" fill="#fffdf7"/>' +
+      '<polygon points="260,252 278,252 269,264" fill="#ff6ca8" stroke="#11110f" stroke-width="5"/>' +
+      '<path d="M269 264 q-18 20 -38 2 M269 264 q18 20 38 2" fill="none" stroke="#11110f" stroke-width="6" stroke-linecap="round"/>' +
+      '<path d="M140 245 l-70 -14 M138 266 l-74 0 M142 286 l-66 15" stroke="#11110f" stroke-width="5" stroke-linecap="round" opacity=".8"/>' +
+      '<path d="M380 245 l70 -14 M382 266 l74 0 M378 286 l66 15" stroke="#11110f" stroke-width="5" stroke-linecap="round" opacity=".8"/>' +
+      '</svg>';
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+
+  var t = today();
+  var nowBase = Date.now();
+  function ts(hoursAgo) { return nowBase - hoursAgo * 3600e3; }
+
+  var seed = [
+    { id: "s1", nick: "图图同学", text: "图书馆三楼窗台又蹲到管理员本喵了！今天阳光正好，谁路过谁来吸猫。", img: catPhoto("#e8842b", "#b95f16", "#f0dcb4", 1), ts: ts(2), likesByDay: ({}), comments: [{ nick: "小鱼干", text: "已吸，毛超软！", ts: ts(1.5) }] },
+    { id: "s2", nick: "饭堂干饭王", text: "第一饭堂门口的芝麻糊今天翻了个肚皮，营业状态满分。", img: catPhoto("#3a3733", "#26241f", "#fff4df", 2), ts: ts(5), likesByDay: ({}), comments: [] },
+    { id: "s3", nick: "阿湖", text: "湖心亭的布丁蹲了一下午鱼，可惜一条没捞着哈哈哈哈。", img: catPhoto("#e8842b", "#b95f16", "#d8ecf7", 3), ts: ts(9), likesByDay: ({}), comments: [{ nick: "图图同学", text: "它锲而不舍的样子太可爱了" }] },
+    { id: "s4", nick: "田径队小狗", text: "晚上跑完步在运动场偶遇了传说中的黑影乌云，速度真的快到拍不清。", img: catPhoto("#11110f", "#000000", "#3a3733", 2), ts: ts(26), likesByDay: ({}), comments: [] },
+    { id: "s5", nick: "宿舍6楼阿姨", text: "楼下的奶盖又准时来查岗了，喵喵催饭的功力一天比一天强。", img: catPhoto("#f7f3ea", "#dcd6c8", "#ffd9e6", 1), ts: ts(30), likesByDay: ({}), comments: [] }
+  ];
+  seed.forEach(function (p, i) { p.likesByDay[t] = [12, 9, 7, 5, 3][i] || 0; });
+
+  /* ---------- state ---------- */
+  var state = load(KEY);
+  if (!state || !Array.isArray(state.posts)) state = { posts: seed, day: t };
+  if (state.day !== t) state = { posts: state.posts, day: t }; // keep posts, ranking naturally resets by day key
+  var me = load(meKey) || "";
+  var liked = load(likedKey) || {};
+  var firstRun = !load(KEY);
+  if (firstRun) save(KEY, state);
+
+  function persist() { save(KEY, state); }
+
+  function likesToday(p) { return (p.likesByDay && p.likesByDay[t]) || 0; }
+  function totalLikes(p) {
+    var s = 0; for (var k in (p.likesByDay || {})) s += p.likesByDay[k]; return s;
+  }
+  function commentCount(p) { return (p.comments || []).length; }
+
+  /* ---------- render ---------- */
+  var $ = function (sel) { return document.querySelector(sel); };
+  var feedEl = $("#feed"), boardEl = $("#board");
+
+  function ordered() {
+    var arr = state.posts.slice();
+    var ranked = arr.filter(function (p) { return likesToday(p) > 0; })
+      .sort(function (a, b) { return likesToday(b) - likesToday(a) || b.ts - a.ts; })
+      .slice(0, 5);
+    var rankIds = {};
+    ranked.forEach(function (p) { rankIds[p.id] = true; });
+    var rest = arr.filter(function (p) { return !rankIds[p.id]; })
+      .sort(function (a, b) { return b.ts - a.ts; });
+    return { ranked: ranked, rest: rest };
+  }
+
+  function avatarColor(nick) {
+    var colors = ["#ffd43b", "#ff6ca8", "#a3e635", "#6fb0d8", "#e3b587"];
+    var h = 0; for (var i = 0; i < nick.length; i++) h = (h * 31 + nick.charCodeAt(i)) >>> 0;
+    return colors[h % colors.length];
+  }
+
+  function postHTML(p, rankNo) {
+    var my = !!liked[p.id];
+    var rankPill = rankNo ? '<span class="pill p-rank">今日榜 No.' + rankNo + '</span>' : "";
+    var cs = (p.comments || []).map(function (c) {
+      return '<div class="comment"><b>' + esc(c.nick) + '</b>' + esc(c.text) + '<span class="cmeta">' + fmtTime(c.ts) + '</span></div>';
+    }).join("");
+    var cEmpty = commentCount(p) ? "" : '<p class="comments-empty">还没有评论，来抢沙发。</p>';
+    return '<article class="post" data-id="' + esc(p.id) + '">' +
+      '<div class="post-head">' +
+      '<span class="p-avatar" style="background:' + avatarColor(p.nick) + '">' + esc(p.nick.slice(0, 1)) + '</span>' +
+      '<div><p class="p-name">' + esc(p.nick) + '</p><p class="p-meta">' + fmtTime(p.ts) + '</p></div>' +
+      rankPill + '</div>' +
+      '<div class="post-body"><p class="ptext">' + esc(p.text) + '</p>' +
+      (p.img ? '<div class="post-img"><img src="' + p.img + '" alt="' + esc(p.nick) + ' 发布的猫咪照片"></div>' : "") +
+      '</div>' +
+      '<div class="post-actions">' +
+      '<button class="act ' + (my ? "liked" : "") + '" data-act="like" aria-pressed="' + my + '">' +
+      '<svg viewBox="0 0 24 24" fill="' + (my ? "currentColor" : "none") + '" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>' +
+      '<span>' + (totalLikes(p)) + '</span></button>' +
+      '<button class="act" data-act="cmt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.9A8 8 0 1 1 21 12Z"/></svg>评论 ' + commentCount(p) + '</button>' +
+      '</div>' +
+      '<div class="comments">' + cEmpty + cs +
+      '<form class="cform"><input class="input" type="text" maxlength="80" placeholder="写下你的评论…" aria-label="评论内容"><button class="btn btn-primary" type="submit">发送</button></form>' +
+      '</div></article>';
+  }
+
+  function render() {
+    var o = ordered();
+    // board
+    if (o.ranked.length) {
+      boardEl.innerHTML = o.ranked.map(function (p, i) {
+        return '<div class="slot"><span class="rk">' + (i + 1) + '</span><img src="' + p.img + '" alt="' + esc(p.nick) + ' 的照片">' +
+          '<div class="bi"><b>' + esc(p.nick) + '</b><span>今日 ' + likesToday(p) + ' 赞</span></div></div>';
+      }).join("");
+    } else {
+      boardEl.innerHTML = '<div class="board-empty">今日还没有点赞，点一颗小心心，榜单马上开始排名。</div>';
+    }
+    // feed: ranked posts shown with rank pill, then rest
+    var html = o.ranked.map(function (p, i) { return postHTML(p, i + 1); }).join("") +
+      o.rest.map(function (p) { return postHTML(p, 0); }).join("");
+    feedEl.innerHTML = html || "";
+    $("#postCount").textContent = state.posts.length;
+    $("#dayChip").textContent = "今日榜单 · " + t + " · 每天 0 点重新排名";
+  }
+
+  /* ---------- interactions ---------- */
+  var pickedData = "";
+
+  feedEl.addEventListener("click", function (e) {
+    var post = e.target.closest(".post");
+    if (!post) return;
+    var id = post.getAttribute("data-id");
+    var p = state.posts.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    var act = e.target.closest("[data-act]");
+    if (act && act.getAttribute("data-act") === "like") {
+      if (liked[id]) {
+        if (p.likesByDay[t]) p.likesByDay[t] = Math.max(0, p.likesByDay[t] - 1);
+        delete liked[id];
+      } else {
+        p.likesByDay[t] = (p.likesByDay[t] || 0) + 1;
+        liked[id] = true;
+      }
+      save(likedKey, liked); persist(); render();
+      return;
+    }
+    if (act && act.getAttribute("data-act") === "cmt") {
+      var box = post.querySelector(".comments");
+      box.classList.toggle("open");
+      if (box.classList.contains("open")) box.querySelector("input").focus();
+      return;
+    }
+    if (e.target.closest(".post-img img")) {
+      $("#lightboxImg").src = p.img;
+      $("#lightbox").setAttribute("data-open", "true");
+    }
+  });
+
+  feedEl.addEventListener("submit", function (e) {
+    var form = e.target.closest(".cform");
+    if (!form) return;
+    e.preventDefault();
+    var post = e.target.closest(".post");
+    var id = post.getAttribute("data-id");
+    var p = state.posts.filter(function (x) { return x.id === id; })[0];
+    var input = form.querySelector("input");
+    var text = input.value.trim();
+    if (!p || !text) return;
+    var nick = me || "匿名猫友";
+    (p.comments = p.comments || []).push({ nick: nick, text: text, ts: Date.now() });
+    input.value = "";
+    persist(); render();
+    var box = document.querySelector('.post[data-id="' + id + '"] .comments');
+    if (box) { box.classList.add("open"); box.scrollIntoView({ block: "nearest" }); }
+  });
+
+  $("#lightbox").addEventListener("click", function () { this.setAttribute("data-open", "false"); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") $("#lightbox").setAttribute("data-open", "false"); });
+
+  /* publish */
+  var imgInput = $("#imgInput"), preview = $("#preview");
+  imgInput.addEventListener("change", function () {
+    var f = imgInput.files && imgInput.files[0];
+    if (!f) { pickedData = ""; preview.removeAttribute("src"); return; }
+    if (f.size > 3 * 1024 * 1024) {
+      $("#pubErr").textContent = "图片超过 3MB，请先压缩后再上传。";
+      $("#pubErr").classList.add("show");
+      imgInput.value = ""; pickedData = ""; preview.removeAttribute("src");
+      return;
+    }
+    var r = new FileReader();
+    r.onload = function () { pickedData = r.result; preview.src = pickedData; $("#pubErr").classList.remove("show"); };
+    r.readAsDataURL(f);
+  });
+
+  $("#pubForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var nick = $("#nick").value.trim();
+    var text = $("#text").value.trim();
+    var err = $("#pubErr");
+    if (!nick) { err.textContent = "先给自己取个昵称吧。"; err.classList.add("show"); return; }
+    if (!text && !pickedData) { err.textContent = "配一段文字或选一张猫咪照片再发布。"; err.classList.add("show"); return; }
+    me = nick; save(meKey, me);
+    state.posts.unshift({
+      id: "p" + Date.now(), nick: nick, text: text,
+      img: pickedData, ts: Date.now(), likesByDay: {}, comments: []
+    });
+    $("#text").value = ""; imgInput.value = ""; pickedData = ""; preview.removeAttribute("src");
+    err.classList.remove("show");
+    persist(); render();
+    document.querySelector(".section-feed").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $("#nick").value = me;
+  render();
+})();
+
+</script>
+</body>
+</html>

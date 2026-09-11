@@ -211,7 +211,7 @@ input,textarea{font:inherit}
         <p class="err" id="pubErr" role="alert"></p>
         <div class="composer-foot">
           <span class="pick-hint">发布后：会进入信息流，收到点赞即参与今日排名。</span>
-          <button class="btn btn-pink" type="submit">发布喵照</button>
+          <button class="btn btn-pink" id="pubBtn" type="submit">发布喵照</button>
         </div>
       </form>
     </div>
@@ -479,7 +479,7 @@ input,textarea{font:inherit}
     if (!nick) { err.textContent = "先给自己取个昵称吧。"; err.classList.add("show"); return; }
     if (!text && !pickedData) { err.textContent = "配一段文字或选一张猫咪照片再发布。"; err.classList.add("show"); return; }
     me = nick; mem(meKey, me);
-    var btn = $("#pubBtn"); btn.disabled = true; btn.textContent = "发布中…";
+    var btn = $("#pubBtn"); if (btn) { btn.disabled = true; btn.textContent = "发布中…"; }
     sbInsert({
       id: "p" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
       nick: nick, body: text, img: pickedData || null,

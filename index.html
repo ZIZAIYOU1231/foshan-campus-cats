@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>佛山大学校园猫咪图鉴 · 校园猫档案</title>
+<meta name="description" content="佛山大学校园猫咪图鉴：按花色、常驻据点、亲人性与绝育状态归类整理的校园猫档案（社群示例数据）。">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo-black@5.2.8/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/space-grotesk@5.2.10/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/noto-sans-sc@5.2.10/index.css">
+<style>
+/* ===== Tokens (only place with raw hex) ===== */
+:root{
+  --field:#fff4df;
+  --surface:#fffdf7;
+  --ink:#11110f;
+  --muted:#4d4b44;
+  --accent:#ffd43b;
+  --pink:#ff6ca8;
+  --ok:#2f9e44;
+  --warn:#e8590c;
+  --info:#1c7ed6;
+  --fur-ginger:#e8842b;
+  --fur-ginger-dark:#b95f16;
+  --fur-snow:#f7f3ea;
+  --fur-snow-dark:#dcd6c8;
+  --fur-charcoal:#3a3733;
+  --fur-charcoal-dark:#26241f;
+  --fur-slate:#a49e94;
+  --fur-slate-dark:#7a746a;
+  --fur-cream:#f0dcb4;
+  --fur-cream-dark:#d8bd86;
+  --eye-green:#5ea672;
+  --eye-amber:#e0a92e;
+  --eye-blue:#6fb0d8;
+  --eye-copper:#c9722b;
+  --font-display:"Archivo Black","Noto Sans SC Variable","Arial Black",Impact,sans-serif;
+  --font-body:"Space Grotesk Variable","Noto Sans SC Variable","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-mono:"SFMono-Regular","Cascadia Code",Menlo,Consolas,monospace;
+  --border:3px;
+  --shadow:6px 6px 0 var(--ink);
+  --shadow-sm:4px 4px 0 var(--ink);
+  --shadow-lg:10px 10px 0 var(--ink);
+  --radius:3px;
+  --container:1200px;
+  --gutter:clamp(16px,4vw,40px);
+}
+
+/* ===== Base ===== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--field);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{margin:0;font-family:var(--font-display);letter-spacing:-0.01em;line-height:1.04;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+ul{margin:0;padding:0;list-style:none}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.container{max-width:var(--container);margin-inline:auto;padding-inline:var(--gutter)}
+.mono{font-family:var(--font-mono)}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+
+/* ===== Nav ===== */
+.nav{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:var(--border) solid var(--ink)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:13px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-size:18px}
+.brand .logo{width:36px;height:36px;border:var(--border) solid var(--ink);background:var(--accent);display:grid;place-items:center;box-shadow:var(--shadow-sm);color:var(--ink)}
+.brand .logo svg{width:22px;height:22px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-weight:600;font-size:14px;padding:8px 12px;border:2px solid transparent}
+.nav-links a:hover{border-color:var(--ink);background:var(--field)}
+.nav .btn{padding:9px 15px}
+
+/* ===== Buttons ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border:var(--border) solid var(--ink);background:var(--surface);color:var(--ink);font-weight:700;font-size:15px;border-radius:var(--radius);box-shadow:var(--shadow-sm);transition:transform .06s ease,box-shadow .06s ease;white-space:nowrap}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-primary{background:var(--accent)}
+.btn-pink{background:var(--pink)}
+.btn-ghost{box-shadow:none;background:transparent;padding-inline:12px}
+.btn-ghost:hover{background:var(--field);transform:none;box-shadow:none}
+
+/* ===== Hero ===== */
+.hero{padding-block:clamp(34px,6vw,72px)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,4vw,56px);align-items:center}
+.hero .eyebrow{display:inline-block;border:2px solid var(--ink);background:var(--surface);padding:6px 11px;box-shadow:var(--shadow-sm);margin-bottom:20px}
+.hero h1{font-size:clamp(38px,6.2vw,82px);line-height:.99}
+.hero h1 .hl{background:var(--accent);box-shadow:6px 6px 0 var(--ink);padding:0 8px;display:inline-block}
+.hero .lead{margin-top:22px;max-width:54ch;font-size:clamp(16px,1.4vw,19px);color:var(--muted)}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hero-stats{display:flex;margin-top:34px;border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow);flex-wrap:wrap}
+.hero-stats .hs{flex:1 1 118px;padding:14px 16px;border-right:var(--border) solid var(--ink)}
+.hero-stats .hs:last-child{border-right:0}
+.hero-stats .hs b{display:block;font-family:var(--font-display);font-size:30px;line-height:1.05}
+.hero-stats .hs span{font-size:12px;color:var(--muted);font-weight:600}
+
+/* ===== Featured card ===== */
+.featured{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow-lg);transform:rotate(-1.3deg)}
+.featured .fav-band{background:var(--ink);color:var(--field);font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;display:flex;justify-content:space-between;gap:10px}
+.featured .avatar{border-bottom:var(--border) solid var(--ink);background:var(--field)}
+.featured .avatar svg{width:100%;height:auto}
+.featured .fbody{padding:16px 18px 20px}
+.featured .fname{font-size:28px}
+.featured .fmeta{color:var(--muted);font-size:14px;margin-top:3px;font-weight:600}
+.featured .ftags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.featured .fnote{margin-top:12px;font-size:13px;color:var(--muted);border-left:5px solid var(--accent);padding-left:11px}
+
+/* ===== Tags / pills / meter ===== */
+.tag{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--ink);background:var(--field);padding:3px 9px;font-size:12px;font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--ink);padding:3px 9px;font-size:12px;font-weight:700;font-family:var(--font-mono);letter-spacing:.02em;white-space:nowrap}
+.pill.done{background:var(--ok);color:var(--surface)}
+.pill.pending{background:var(--warn);color:var(--surface)}
+.pill.unknown{background:var(--surface);color:var(--muted)}
+.meter{display:inline-flex;gap:3px;align-items:center}
+.meter i{width:10px;height:10px;border:2px solid var(--ink);display:inline-block}
+.meter i.on{background:var(--accent)}
+
+/* ===== Sections ===== */
+.section{padding-block:clamp(44px,7vw,86px);border-top:var(--border) solid var(--ink)}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.sec-head h2{font-size:clamp(28px,4vw,46px)}
+.sec-head .eyebrow{margin-bottom:10px;display:block}
+
+/* ===== Filter console ===== */
+.console{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow);padding:18px;display:grid;gap:14px}
+.fgroup{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:start;border-top:2px solid color-mix(in srgb,var(--ink) 15%,transparent);padding-top:12px}
+.fgroup:first-child{border-top:0;padding-top:0}
+.fgroup .flabel{font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding-top:9px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--ink);background:var(--surface);padding:7px 12px;font-size:13px;font-weight:600;border-radius:var(--radius);transition:transform .06s ease,background .1s ease}
+.chip:hover{background:var(--field)}
+.chip[aria-pressed="true"]{background:var(--accent);box-shadow:var(--shadow-sm)}
+.chip:active{transform:translate(1px,1px)}
+.console-tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;border-top:2px solid color-mix(in srgb,var(--ink) 15%,transparent);padding-top:14px}
+.search{display:flex;align-items:center;gap:8px;border:2px solid var(--ink);background:var(--field);padding:9px 12px;flex:1 1 240px}
+.search svg{width:16px;height:16px;flex:0 0 auto}
+.search input{border:0;background:transparent;font:inherit;font-size:14px;outline:none;width:100%;color:var(--ink)}
+.tool-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.select{border:2px solid var(--ink);background:var(--surface);padding:9px 10px;font:inherit;font-size:14px;font-weight:600;border-radius:var(--radius);color:var(--ink)}
+.result-line{margin:20px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.result-line b{font-family:var(--font-display);font-size:22px;color:var(--ink);margin:0 2px}
+
+/* ===== Cat grid ===== */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:22px}
+.cat-card{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow-sm);cursor:pointer;display:flex;flex-direction:column;transition:transform .08s ease,box-shadow .08s ease}
+.cat-card:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow)}
+.cat-card:active{transform:translate(1px,1px);box-shadow:0 0 0 var(--ink)}
+.cat-avatar{position:relative;border-bottom:var(--border) solid var(--ink);background:var(--field)}
+.cat-avatar svg{width:100%;height:auto}
+.dossier{position:absolute;top:10px;left:10px;background:var(--ink);color:var(--field);font-family:var(--font-mono);font-size:11px;padding:3px 7px;letter-spacing:.05em}
+.cat-avatar .pill{position:absolute;top:10px;right:10px}
+.cat-body{padding:14px 14px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cat-body h3{font-size:21px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cat-body h3 .pinyin{font-family:var(--font-mono);font-size:11px;color:var(--muted);font-weight:400}
+.cat-sub{font-size:13px;color:var(--muted);font-weight:600}
+.cat-tags{display:flex;gap:6px;flex-wrap:wrap}
+.cat-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:9px;border-top:2px solid color-mix(in srgb,var(--ink) 15%,transparent);font-size:12px;color:var(--muted)}
+.empty{border:var(--border) dashed var(--ink);background:var(--surface);padding:48px 20px;text-align:center;color:var(--muted);font-weight:600}
+
+/* ===== Charts / panels ===== */
+.chart-wrap{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.panel{border:var(--border) solid var(--ink);background:var(--surface);box-shadow:var(--shadow);padding:20px}
+.panel h3{font-size:20px;margin-bottom:18px}
+.bar-row{display:grid;grid-template-columns:78px 1fr 30px;gap:10px;align-items:center;margin-bottom:10px}
+.bar-label{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{border:2px solid var(--ink);background:var(--field);height:22px;overflow:hidden}
+.bar-fill{height:100%;background:var(--accent);border-right:2px solid var(--ink);transition:width .3s ease}
+.bar-fill.pink{background:var(--pink)}
+.bar-val{font-family:var(--font-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.progress{height:36px;border:var(--border) solid var(--ink);background:var(--field);position:relative}
+.progress .pf{height:100%;background:var(--ok);border-right:var(--border) solid var(--ink);transition:width .3s ease}
+.progress .pl{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--ink)}
+
+/* ===== About ===== */
+.about-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:30px;align-items:start}
+.about-grid h2{margin-bottom:16px}
+.about-grid p{margin-bottom:14px;color:var(--muted)}
+.about-grid p strong{color:var(--ink)}
+.note{border:var(--border) solid var(--ink);background:var(--accent);padding:16px;box-shadow:var(--shadow-sm);font-size:14px;line-height:1.55;margin-top:6px}
+.note h4{font-size:16px;margin-bottom:8px}
+.steps li{border:2px solid var(--ink);background:var(--surface);padding:12px 14px;margin-bottom:10px;font-size:14px;display:flex;gap:11px;align-items:baseline}
+.steps li b{font-family:var(--font-display);font-size:18px}
+
+/* ===== Modal ===== */
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:20px;background:color-mix(in srgb,var(--ink) 62%,transparent)}
+.modal[data-open="true"]{display:grid}
+.modal-card{background:var(--surface);border:var(--border) solid var(--ink);box-shadow:var(--shadow-lg);max-width:640px;width:100%;max-height:92vh;overflow:auto}
+.modal-top{display:grid;grid-template-columns:210px 1fr;border-bottom:var(--border) solid var(--ink)}
+.modal-top .avatar{background:var(--field);border-right:var(--border) solid var(--ink)}
+.modal-top .avatar svg{width:100%;height:auto}
+.modal-head{padding:18px}
+.modal-head h2{font-size:32px}
+.modal-head .dossier{position:static;display:inline-block;margin-bottom:10px}
+.modal-head .mmeta{font-size:13px;color:var(--muted);font-weight:600;margin-top:4px}
+.modal-head .mtags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.modal-close{position:absolute;top:14px;right:14px}
+.modal-card{position:relative}
+.modal-body{padding:18px}
+.field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;border:2px solid var(--ink);background:var(--ink)}
+.field-grid .fg{background:var(--surface);padding:10px 12px}
+.field-grid .fg dt{font-size:11px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.field-grid .fg dd{margin:3px 0 0;font-weight:700;font-size:15px}
+.modal-note{margin-top:14px;border-left:6px solid var(--accent);padding:6px 0 6px 14px;color:var(--ink);font-size:14px}
+.modal-note b{font-family:var(--font-mono);font-size:12px;color:var(--muted);display:block;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+
+/* ===== Footer ===== */
+.foot{border-top:var(--border) solid var(--ink);background:var(--ink);color:var(--field);padding-block:32px}
+.foot-inner{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;font-size:14px}
+.foot .mono{color:color-mix(in srgb,var(--field) 68%,transparent);font-size:12px}
+
+/* ===== Responsive ===== */
+@media (max-width:920px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-grid > #featured{order:-1;max-width:420px}
+  .chart-wrap{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr}
+  .modal-top{grid-template-columns:1fr}
+  .modal-top .avatar{border-right:0;border-bottom:var(--border) solid var(--ink)}
+  .fgroup{grid-template-columns:1fr;gap:8px}
+}
+@media (max-width:600px){
+  .hero-stats .hs{flex:1 1 100%;border-right:0;border-bottom:var(--border) solid var(--ink)}
+  .hero-stats .hs:last-child{border-bottom:0}
+  .nav-links{display:none}
+  .field-grid{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#catalog" style="position:absolute;left:-9999px">跳到图鉴</a>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 13c0-3.2 3.6-5.2 8-5.2s8 2 8 5.2-3.6 5.2-8 5.2-8-2-8-5.2Z"/><path d="M5.5 9 6.5 4 10 7M18.5 9 17.5 4 14 7"/></svg></span>
+      佛大猫档案
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#catalog">图鉴检索</a>
+      <a href="#zones">分布统计</a>
+      <a href="#about">关于项目</a>
+    </nav>
+    <a class="btn btn-primary" href="#catalog">浏览图鉴</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">佛山大学 · 校园猫互助社群</span>
+        <h1>给校园里每一只猫，<span class="hl">一个名字</span>和一档档案。</h1>
+        <p class="lead">按花色、常驻据点、亲人性与绝育状态，把散落在校园各处的流浪猫整理成一份可检索的图鉴，方便志愿者接力喂养与推进 TNR。</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#catalog">进入图鉴检索</a>
+          <a class="btn" href="#about">了解如何参与</a>
+        </div>
+        <div class="hero-stats" aria-label="图鉴总览">
+          <div class="hs"><b class="num" id="statTotal">–</b><span>收录猫咪</span></div>
+          <div class="hs"><b class="num" id="statDone">–</b><span>已绝育</span></div>
+          <div class="hs"><b class="num" id="statZones">–</b><span>常驻据点</span></div>
+        </div>
+      </div>
+      <div id="featured"></div>
+    </div>
+  </section>
+
+  <section class="section" id="catalog">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">分类检索 · 归个类</span>
+          <h2>按花色、据点、亲人性筛选猫咪</h2>
+        </div>
+        <p class="mono" id="updated" style="color:var(--muted);font-size:12px"></p>
+      </div>
+      <div class="console" id="console"></div>
+      <div class="result-line">
+        <span>符合条件的猫咪：<b id="count">0</b>只</span>
+        <span id="hint">点击卡片查看完整档案</span>
+      </div>
+      <div class="cat-grid" id="grid"></div>
+      <div id="empty" class="empty" style="display:none">没有符合条件的猫咪，试试清空或放宽筛选条件。</div>
+    </div>
+  </section>
+
+  <section class="section" id="zones">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">分布统计 · 全部 18 只</span>
+          <h2>它们都在哪儿，都是什么花色</h2>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="panel"><h3>常驻据点分布</h3><div id="zoneChart"></div></div>
+        <div class="panel"><h3>花色构成</h3><div id="coatChart"></div></div>
+      </div>
+      <div class="panel" style="margin-top:26px">
+        <h3>绝育（TNR）进度</h3>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:14px">已绝育 <b class="num" id="tnrDone">–</b> / 共 <b class="num" id="tnrTotal">–</b> 只 · 其中已剪耳标记 <b class="num" id="earTip">–</b> 只</p>
+        <div class="progress"><div class="pf" id="tnrFill"></div><div class="pl"><span>目标：全部完成绝育</span><span id="tnrPct">–</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container about-grid">
+      <div>
+        <span class="eyebrow">关于这份图鉴</span>
+        <h2>一份可以接力的校园猫档案</h2>
+        <p>校园里的流浪猫来来去去，没有名字、没有记录，喂养和绝育就难以持续。<strong>佛大猫档案</strong>把每一只猫登记成一张卡片：谁常驻哪栋楼、亲人还是怕人、绝育了没有，志愿者一查就知道该带谁去做 TNR、谁的饭点最容易错过。</p>
+        <p>本页是一个网页示例：猫咪的名字、花色、据点与记录时间均为<strong>社群志愿者的示例数据</strong>，用于演示“归类 + 检索”的工作方式，并非佛山大学的官方信息。真实使用时，由志愿者拍照、登记、定期更新即可。</p>
+        <div class="note">
+          <h4>数据说明</h4>
+          页面中所有猫咪资料均为示例数据（共 18 只），不代表真实个体；据点、花色、日期等仅用于展示筛选与统计效果。
+        </div>
+      </div>
+      <div>
+        <h4 style="font-family:var(--font-display);font-size:20px;margin-bottom:14px">你可以怎么帮忙</h4>
+        <ul class="steps">
+          <li><b>01</b><span>拍照登记：拍一张清楚的正脸与花色，记录出没地点与时间。</span></li>
+          <li><b>02</b><span>认领卡片：给常喂的猫取个名字，补充性格、习惯与别名。</span></li>
+          <li><b>03</b><span>接力喂养：按据点轮值，别让饭点断档。</span></li>
+          <li><b>04</b><span>推进 TNR：标记“待绝育”个体，联系合作的志愿者团队。</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="container foot-inner">
+    <span>佛大猫档案 · 校园猫互助社群（示例项目）</span>
+    <span class="mono">示例数据 · 更新于 2026-09-08 · 非官方信息</span>
+  </div>
+</footer>
+
+<div class="modal" id="modal" data-open="false" role="dialog" aria-modal="true" aria-label="猫咪档案详情">
+  <div class="modal-card" id="modalCard"></div>
+</div>
+
+<script>
+window.CATALOG = {
+  meta: { updated: "2026-09-08" },
+  coats: {
+    tabby:  { label: "狸花猫", short: "狸花", base: "var(--fur-slate)",       dark: "var(--fur-charcoal-dark)", patch: null, pattern: "tabby",  eye: "var(--eye-amber)" },
+    ginger: { label: "橘猫",   short: "橘猫", base: "var(--fur-ginger)",      dark: "var(--fur-ginger-dark)",   patch: null, pattern: "tabby",  eye: "var(--eye-green)" },
+    tuxedo: { label: "奶牛猫", short: "奶牛", base: "var(--fur-charcoal)",    dark: "var(--fur-charcoal-dark)", patch: null, pattern: "tuxedo", eye: "var(--eye-green)" },
+    calico: { label: "三花猫", short: "三花", base: "var(--fur-snow)",        dark: "var(--fur-snow-dark)",     patch: null, pattern: "calico", eye: "var(--eye-amber)" },
+    tortie: { label: "玳瑁猫", short: "玳瑁", base: "var(--fur-charcoal-dark)", dark: "var(--fur-charcoal)",    patch: null, pattern: "tortie", eye: "var(--eye-copper)" },
+    black:  { label: "黑猫",   short: "黑猫", base: "var(--fur-charcoal)",    dark: "var(--fur-charcoal-dark)", patch: null, pattern: "solid",  eye: "var(--eye-amber)" },
+    white:  { label: "白猫",   short: "白猫", base: "var(--fur-snow)",        dark: "var(--fur-snow-dark)",     patch: null, pattern: "solid",  eye: "var(--eye-blue)" }
+  },
+  zones: {
+    lib: "图书馆", c1: "第一饭堂", c2: "第二饭堂", teach: "教学楼",
+    dorm: "学生宿舍", sports: "运动场", lake: "湖心亭", clinic: "校医院", gate: "南门"
+  },
+  friendliness: {
+    friendly: { label: "亲人", rank: 3 },
+    wary:     { label: "观望", rank: 2 },
+    shy:      { label: "怕人", rank: 1 }
+  },
+  tnr: { done: "已绝育", pending: "待绝育", unknown: "未知" },
+  cats: [
+    { n:1,  id:"zhimahu", name:"芝麻糊", pinyin:"zhī má hú", coat:"tuxedo", zone:"c1",     friend:"friendly", tnr:"done",    earTip:true,  sex:"公", age:"约 3 岁", firstSeen:"2024-03-12", lastSeen:"2026-09-05", eye:"var(--eye-green)", traits:["见人就翻肚皮","饭点最准时"], note:"第一饭堂的“迎宾猫”，听到塑料袋声立刻出现，从不缺席晚饭高峰。" },
+    { n:2,  id:"daju",    name:"大橘",   pinyin:"dà jú",     coat:"ginger", zone:"lib",    friend:"friendly", tnr:"done",    earTip:false, sex:"公", age:"约 5 岁", firstSeen:"2023-09-01", lastSeen:"2026-09-06", eye:"var(--eye-amber)", traits:["图书馆常驻","靠窗晒太阳"], note:"图书馆一楼的老住户，最爱在三楼阅览区门口的暖气位打盹，被学生戏称“图文管理员”。" },
+    { n:3,  id:"sanhuamei", name:"三花妹", pinyin:"sān huā mèi", coat:"calico", zone:"dorm", friend:"wary",  tnr:"pending", earTip:false, sex:"母", age:"约 2 岁", firstSeen:"2024-08-20", lastSeen:"2026-08-30", eye:"var(--eye-amber)", traits:["躲快递柜后","轻手轻脚"], note:"白天藏在宿舍区快递柜后，晚上才出来找吃的，靠近会后退两步但不会跑远。" },
+    { n:4,  id:"wuyun",   name:"乌云",   pinyin:"wū yún",    coat:"black",  zone:"sports", friend:"shy",   tnr:"unknown", earTip:false, sex:"公", age:"约 1 岁", firstSeen:"2025-10-02", lastSeen:"2026-09-04", eye:"var(--eye-amber)", traits:["夜里才现身","跑得极快"], note:"运动场看台后的黑影，只有熄灯后才会露面，速度是全校第一。" },
+    { n:5,  id:"xueqiu",  name:"雪球",   pinyin:"xuě qiú",   coat:"white",  zone:"clinic", friend:"wary",  tnr:"done",    earTip:true,  sex:"母", age:"约 4 岁", firstSeen:"2023-11-11", lastSeen:"2026-08-28", eye:"var(--eye-blue)", traits:["爱蹭白大褂","会主动打招呼"], note:"校医院门口的常客，对穿制服的人格外友好，喜欢躺在台阶的太阳地里。" },
+    { n:6,  id:"daimao",  name:"玳瑁",   pinyin:"dài mào",   coat:"tortie", zone:"c2",     friend:"wary",  tnr:"done",    earTip:false, sex:"母", age:"约 3 岁", firstSeen:"2024-01-15", lastSeen:"2026-09-01", eye:"var(--eye-copper)", traits:["脾气不小","独来独往"], note:"第二饭堂后厨区的独行侠，吃饭时不许别的猫靠近，但对喂饭的阿姨很给面子。" },
+    { n:7,  id:"buding",  name:"布丁",   pinyin:"bù dīng",   coat:"ginger", zone:"lake",   friend:"friendly", tnr:"done",  earTip:false, sex:"公", age:"约 2 岁", firstSeen:"2024-06-06", lastSeen:"2026-09-07", eye:"var(--eye-green)", traits:["湖心亭常驻","亲人会讨鱼"], note:"湖心亭边蹲点看鱼的橘猫，见到拎着食物的人会一路小跑跟到长椅旁。" },
+    { n:8,  id:"meiqiu",  name:"煤球",   pinyin:"méi qiú",   coat:"black",  zone:"teach",  friend:"wary",  tnr:"unknown", earTip:false, sex:"公", age:"约 2 岁", firstSeen:"2024-05-18", lastSeen:"2026-08-25", eye:"var(--eye-amber)", traits:["晚自习后出没","怕手"], note:"教学楼熄灯后才出现，在走廊灯下像一团会移动的墨，喂食需要放碗后退。" },
+    { n:9,  id:"huajuan", name:"花卷",   pinyin:"huā juǎn",  coat:"tabby",  zone:"c2",     friend:"friendly", tnr:"done", earTip:true, sex:"母", age:"约 4 岁", firstSeen:"2023-12-03", lastSeen:"2026-09-03", eye:"var(--eye-amber)", traits:["饭堂老友","会坐等投喂"], note:"第二饭堂门口的老资格狸花，剪耳明显，会规规矩矩坐在餐桌旁等剩饭。" },
+    { n:10, id:"xiaoman", name:"小满",   pinyin:"xiǎo mǎn",  coat:"calico", zone:"lib",    friend:"shy",   tnr:"pending", earTip:false, sex:"母", age:"约 1 岁", firstSeen:"2025-05-06", lastSeen:"2026-09-02", eye:"var(--eye-amber)", traits:["图书馆后门","只远远看"], note:"图书馆后门的小三花，怕人，只在人少时出来活动，尚未完成绝育登记。" },
+    { n:11, id:"dahuang", name:"大黄",   pinyin:"dà huáng",  coat:"ginger", zone:"gate",   friend:"friendly", tnr:"done", earTip:false, sex:"公", age:"约 6 岁", firstSeen:"2023-07-21", lastSeen:"2026-09-06", eye:"var(--eye-amber)", traits:["南门“保安”","谁都能摸"], note:"南门保安亭旁的地头蛇，脾气极好，几乎所有路过的学生都摸过它。" },
+    { n:12, id:"nainiu",  name:"奶牛",   pinyin:"nǎi niú",   coat:"tuxedo", zone:"sports", friend:"wary",  tnr:"done", earTip:false, sex:"母", age:"约 3 岁", firstSeen:"2024-02-14", lastSeen:"2026-08-29", eye:"var(--eye-green)", traits:["球场边蹲守","不怕球"], note:"运动场边的奶牛猫，对飞来的球毫无反应，只关心看台上有没有零食。" },
+    { n:13, id:"huihui",  name:"灰灰",   pinyin:"huī huī",   coat:"tabby",  zone:"lib",    friend:"wary",  tnr:"unknown", earTip:false, sex:"公", age:"约 2 岁", firstSeen:"2024-09-09", lastSeen:"2026-08-31", eye:"var(--eye-green)", traits:["书架间打盹","备受欢迎"], note:"常被发现在书架之间打盹，胆子中等，饿的时候会主动凑到自习区讨食。" },
+    { n:14, id:"naigai",  name:"奶盖",   pinyin:"nǎi gài",   coat:"white",  zone:"dorm",   friend:"friendly", tnr:"done", earTip:false, sex:"母", age:"约 2 岁", firstSeen:"2024-07-07", lastSeen:"2026-09-08", eye:"var(--eye-blue)", traits:["宿舍楼下等饭","会喵喵催"], note:"宿舍楼下最准时的白猫，一到饭点就冲喂饭的同学喵喵叫，催得比闹钟还准。" },
+    { n:15, id:"jiangyou", name:"酱油",  pinyin:"jiàng yóu", coat:"tortie", zone:"c1",     friend:"shy",   tnr:"pending", earTip:false, sex:"母", age:"约 2 岁", firstSeen:"2025-03-03", lastSeen:"2026-08-27", eye:"var(--eye-copper)", traits:["怕人","夜里捡剩饭"], note:"深色玳瑁，白天几乎见不到，只在收摊后到第一饭堂后门找剩饭，需要长期观察才能登记。" },
+    { n:16, id:"yuanbao", name:"元宝",   pinyin:"yuán bǎo",  coat:"ginger", zone:"teach",  friend:"friendly", tnr:"done", earTip:true, sex:"公", age:"约 4 岁", firstSeen:"2023-10-10", lastSeen:"2026-09-05", eye:"var(--eye-amber)", traits:["教学楼“学长”","爱趴窗台"], note:"教学楼里资历最老的橘猫，剪耳清晰，上课时爱趴在三楼窗台晒太阳，被叫“学长”。" },
+    { n:17, id:"mashu",   name:"麻薯",   pinyin:"má shǔ",    coat:"calico", zone:"clinic", friend:"wary",  tnr:"done", earTip:false, sex:"母", age:"约 3 岁", firstSeen:"2024-04-04", lastSeen:"2026-08-26", eye:"var(--eye-amber)", traits:["校医院门口","需慢动作靠近"], note:"和三花妹花色相近，但性格更稳，只要动作慢一点就允许近距离观察。" },
+    { n:18, id:"laohu",   name:"老虎",   pinyin:"lǎo hǔ",    coat:"tabby",  zone:"gate",   friend:"shy",   tnr:"unknown", earTip:false, sex:"公", age:"约 1 岁", firstSeen:"2025-08-08", lastSeen:"2026-09-01", eye:"var(--eye-amber)", traits:["南门绿化带","一靠近就跑"], note:"南门绿化带里毛色漂亮的狸花，警惕性极高，是图鉴里最需要耐心的一只。" }
+  ]
+};
+
+</script>
+<script>
+(function () {
+  "use strict";
+  var DATA = window.CATALOG;
+  var COATS = DATA.coats, ZONES = DATA.zones, FRIEND = DATA.friendliness, TNR = DATA.tnr, CATS = DATA.cats;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function pad3(n) { return String(n).padStart(3, "0"); }
+
+  /* -------- inline SVG cat portrait generator (original illustrated system) -------- */
+  function avatar(cat) {
+    var c = COATS[cat.coat];
+    var eye = cat.eye || c.eye;
+    var clipId = "clip-" + cat.id;
+    var base = c.base, dark = c.dark, pattern = "";
+
+    if (c.pattern === "tabby") {
+      pattern =
+        '<path d="M104 74 v18 M120 70 v22 M136 74 v18" stroke="' + dark + '" stroke-width="7" stroke-linecap="round" fill="none"/>' +
+        '<path d="M64 104 l-16 -7 M62 118 l-18 -2 M66 132 l-16 7" stroke="' + dark + '" stroke-width="6" stroke-linecap="round" fill="none"/>' +
+        '<path d="M176 104 l16 -7 M178 118 l18 -2 M174 132 l16 7" stroke="' + dark + '" stroke-width="6" stroke-linecap="round" fill="none"/>';
+    } else if (c.pattern === "tuxedo") {
+      pattern =
+        '<path d="M120 56 L140 98 L134 150 Q120 164 106 150 L100 98 Z" fill="var(--fur-snow)"/>' +
+        '<ellipse cx="120" cy="152" rx="42" ry="26" fill="var(--fur-snow)"/>';
+    } else if (c.pattern === "calico") {
+      pattern =
+        '<circle cx="74" cy="96" r="36" fill="var(--fur-ginger)"/>' +
+        '<circle cx="168" cy="94" r="30" fill="var(--fur-charcoal)"/>' +
+        '<circle cx="120" cy="170" r="26" fill="var(--fur-ginger)"/>' +
+        '<circle cx="42" cy="150" r="22" fill="var(--fur-charcoal)"/>';
+    } else if (c.pattern === "tortie") {
+      pattern =
+        '<circle cx="80" cy="92" r="30" fill="var(--fur-ginger)"/>' +
+        '<circle cx="152" cy="84" r="22" fill="var(--fur-cream)"/>' +
+        '<circle cx="150" cy="150" r="26" fill="var(--fur-ginger-dark)"/>' +
+        '<circle cx="92" cy="162" r="22" fill="var(--fur-cream)"/>' +
+        '<circle cx="122" cy="118" r="16" fill="var(--fur-cream-dark)"/>';
+    }
+
+    return '<svg viewBox="0 0 240 210" role="img" aria-label="' + esc(cat.name) + ' 的头像插画" class="cat-svg">' +
+      '<defs><clipPath id="' + clipId + '"><ellipse cx="120" cy="118" rx="80" ry="72"/></clipPath></defs>' +
+      '<polygon points="52,80 58,20 106,54" fill="' + base + '" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>' +
+      '<polygon points="188,80 182,20 134,54" fill="' + base + '" stroke="var(--ink)" stroke-width="5" stroke-linejoin="round"/>' +
+      '<polygon points="67,72 71,38 97,58" fill="var(--pink)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" opacity="0.55"/>' +
+      '<polygon points="173,72 169,38 143,58" fill="var(--pink)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" opacity="0.55"/>' +
+      '<ellipse cx="120" cy="118" rx="80" ry="72" fill="' + base + '" stroke="var(--ink)" stroke-width="5"/>' +
+      '<g clip-path="url(#' + clipId + ')">' + pattern + '</g>' +
+      '<ellipse cx="92" cy="112" rx="15" ry="17" fill="var(--fur-snow)" stroke="var(--ink)" stroke-width="4"/>' +
+      '<ellipse cx="148" cy="112" rx="15" ry="17" fill="var(--fur-snow)" stroke="var(--ink)" stroke-width="4"/>' +
+      '<circle cx="92" cy="113" r="8.5" fill="' + eye + '"/>' +
+      '<circle cx="148" cy="113" r="8.5" fill="' + eye + '"/>' +
+      '<ellipse cx="92" cy="113" rx="3.2" ry="7" fill="var(--ink)"/>' +
+      '<ellipse cx="148" cy="113" rx="3.2" ry="7" fill="var(--ink)"/>' +
+      '<circle cx="88" cy="107" r="2.6" fill="var(--fur-snow)"/>' +
+      '<circle cx="144" cy="107" r="2.6" fill="var(--fur-snow)"/>' +
+      '<path d="M112 132 L128 132 L120 141 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M120 141 q -11 12 -22 1 M120 141 q 11 12 22 1" fill="none" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/>' +
+      '<path d="M64 122 l-40 -8 M62 134 l-42 0 M66 146 l-38 9" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.85"/>' +
+      '<path d="M176 122 l40 -8 M178 134 l42 0 M174 146 l38 9" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.85"/>' +
+      '</svg>';
+  }
+
+  function meter(f) {
+    var rank = FRIEND[f].rank;
+    var out = "";
+    for (var i = 1; i <= 3; i++) out += '<i class="' + (i <= rank ? "on" : "") + '"></i>';
+    return out;
+  }
+
+  /* -------- filter groups -------- */
+  var GROUPS = [
+    { key: "coat", label: "花色", items: Object.keys(COATS).map(function (k) { return { v: k, t: COATS[k].short }; }) },
+    { key: "zone", label: "常驻据点", items: Object.keys(ZONES).map(function (k) { return { v: k, t: ZONES[k] }; }) },
+    { key: "friend", label: "亲人性", items: Object.keys(FRIEND).map(function (k) { return { v: k, t: FRIEND[k].label }; }) },
+    { key: "tnr", label: "绝育状态", items: Object.keys(TNR).map(function (k) { return { v: k, t: TNR[k] }; }) }
+  ];
+  var state = { coat: new Set(), zone: new Set(), friend: new Set(), tnr: new Set(), q: "", sort: "default" };
+
+  var $ = function (sel) { return document.querySelector(sel); };
+
+  function renderConsole() {
+    var html = GROUPS.map(function (g) {
+      var chips = g.items.map(function (it) {
+        return '<button class="chip" type="button" data-group="' + g.key + '" data-v="' + it.v + '" aria-pressed="false">' + esc(it.t) + "</button>";
+      }).join("");
+      return '<div class="fgroup"><div class="flabel">' + g.label + '</div><div class="chips">' + chips + "</div></div>";
+    }).join("");
+    html += '<div class="console-tools">' +
+      '<label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
+      '<input id="q" type="search" placeholder="搜索名字 / 称呼 / 特征 / 据点" aria-label="搜索猫咪"></label>' +
+      '<div class="tool-right">' +
+      '<label class="num" style="font-size:12px;display:flex;gap:6px;align-items:center;color:var(--muted)">排序' +
+      '<select class="select" id="sort" aria-label="排序方式">' +
+      '<option value="default">默认（档案编号）</option>' +
+      '<option value="recent">最近目击</option>' +
+      '<option value="friend-desc">亲人性：高 → 低</option>' +
+      '<option value="name">名字</option>' +
+      '</select></label>' +
+      '<button class="btn btn-ghost" type="button" id="reset">清空筛选</button>' +
+      '</div></div>';
+    $("#console").innerHTML = html;
+  }
+
+  function matched(cat) {
+    if (state.coat.size && !state.coat.has(cat.coat)) return false;
+    if (state.zone.size && !state.zone.has(cat.zone)) return false;
+    if (state.friend.size && !state.friend.has(cat.friend)) return false;
+    if (state.tnr.size && !state.tnr.has(cat.tnr)) return false;
+    var q = state.q.trim().toLowerCase();
+    if (q) {
+      var hay = [cat.name, cat.pinyin, COATS[cat.coat].label, ZONES[cat.zone], FRIEND[cat.friend].label, (cat.traits || []).join(" "), cat.note || ""].join(" ").toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+
+  function sortList(list) {
+    var arr = list.slice();
+    if (state.sort === "recent") arr.sort(function (a, b) { return a.lastSeen < b.lastSeen ? 1 : a.lastSeen > b.lastSeen ? -1 : a.n - b.n; });
+    else if (state.sort === "friend-desc") arr.sort(function (a, b) { return FRIEND[b.friend].rank - FRIEND[a.friend].rank || a.n - b.n; });
+    else if (state.sort === "name") arr.sort(function (a, b) { return a.name.localeCompare(b.name, "zh-Hans-CN"); });
+    else arr.sort(function (a, b) { return a.n - b.n; });
+    return arr;
+  }
+
+  function card(cat) {
+    var tags = (cat.traits || []).slice(0, 2).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+    return '<article class="cat-card" data-id="' + cat.id + '" tabindex="0" role="button" aria-label="查看 ' + esc(cat.name) + ' 的档案">' +
+      '<div class="cat-avatar">' + avatar(cat) +
+      '<span class="dossier">No.' + pad3(cat.n) + '</span>' +
+      '<span class="pill ' + cat.tnr + '">' + TNR[cat.tnr] + '</span></div>' +
+      '<div class="cat-body">' +
+      '<h3>' + esc(cat.name) + '<span class="pinyin">' + esc(cat.pinyin) + '</span></h3>' +
+      '<p class="cat-sub">' + esc(COATS[cat.coat].label) + " · " + esc(ZONES[cat.zone]) + '</p>' +
+      '<div class="cat-tags">' + tags + '</div>' +
+      '<div class="cat-foot"><span class="meter" title="亲人性：' + FRIEND[cat.friend].label + '">' + meter(cat.friend) + '</span>' +
+      '<span>最近目击 ' + esc(cat.lastSeen) + '</span></div>' +
+      '</div></article>';
+  }
+
+  function renderGrid() {
+    var list = sortList(CATS.filter(matched));
+    $("#count").textContent = list.length;
+    if (list.length === 0) {
+      $("#grid").innerHTML = "";
+      $("#empty").style.display = "block";
+    } else {
+      $("#empty").style.display = "none";
+      $("#grid").innerHTML = list.map(card).join("");
+    }
+  }
+
+  /* -------- modal -------- */
+  function openModal(id) {
+    var cat = CATS.filter(function (c) { return c.id === id; })[0];
+    if (!cat) return;
+    var rows = [
+      ["档案编号", "No." + pad3(cat.n)],
+      ["花色", COATS[cat.coat].label],
+      ["常驻据点", ZONES[cat.zone]],
+      ["亲人性", FRIEND[cat.friend].label],
+      ["绝育状态", TNR[cat.tnr] + (cat.earTip ? " · 已剪耳" : "")],
+      ["性别", cat.sex],
+      ["估计年龄", cat.age],
+      ["首次记录", cat.firstSeen],
+      ["最近目击", cat.lastSeen],
+      ["特征标签", (cat.traits || []).join("、")]
+    ].map(function (r) {
+      return '<div class="fg"><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + "</dd></div>";
+    }).join("");
+    var tags = (cat.traits || []).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+    $("#modalCard").innerHTML =
+      '<button class="btn btn-ghost modal-close" type="button" id="modalClose" aria-label="关闭档案">关闭 ✕</button>' +
+      '<div class="modal-top">' +
+      '<div class="avatar">' + avatar(cat) + '</div>' +
+      '<div class="modal-head">' +
+      '<span class="dossier">No.' + pad3(cat.n) + '</span>' +
+      '<h2>' + esc(cat.name) + '</h2>' +
+      '<p class="mmeta">' + esc(COATS[cat.coat].label) + " · " + esc(ZONES[cat.zone]) + " · " + FRIEND[cat.friend].label + '</p>' +
+      '<div class="mtags">' + tags + '</div>' +
+      '</div></div>' +
+      '<div class="modal-body">' +
+      '<dl class="field-grid">' + rows + '</dl>' +
+      '<div class="modal-note"><b>小档案</b>' + esc(cat.note) + '</div>' +
+      '</div>';
+    var modal = $("#modal");
+    modal.setAttribute("data-open", "true");
+    var btn = $("#modalClose");
+    if (btn) btn.focus();
+  }
+  function closeModal() { $("#modal").setAttribute("data-open", "false"); }
+
+  /* -------- charts + stats -------- */
+  function barRow(label, val, max, pink) {
+    var pct = max ? Math.round((val / max) * 100) : 0;
+    return '<div class="bar-row"><span class="bar-label">' + esc(label) + '</span>' +
+      '<span class="bar-track"><span class="bar-fill' + (pink ? " pink" : "") + '" style="width:' + pct + '%"></span></span>' +
+      '<span class="bar-val">' + val + "</span></div>";
+  }
+  function renderCharts() {
+    var zc = {}, cc = {};
+    CATS.forEach(function (c) { zc[c.zone] = (zc[c.zone] || 0) + 1; cc[c.coat] = (cc[c.coat] || 0) + 1; });
+    var zentries = Object.keys(ZONES).map(function (k) { return { label: ZONES[k], val: zc[k] || 0 }; }).sort(function (a, b) { return b.val - a.val; });
+    var centries = Object.keys(COATS).map(function (k) { return { label: COATS[k].label, val: cc[k] || 0 }; }).sort(function (a, b) { return b.val - a.val; });
+    var zmax = Math.max.apply(null, zentries.map(function (e) { return e.val; }).concat([1]));
+    var cmax = Math.max.apply(null, centries.map(function (e) { return e.val; }).concat([1]));
+    $("#zoneChart").innerHTML = zentries.map(function (e) { return barRow(e.label, e.val, zmax, false); }).join("");
+    $("#coatChart").innerHTML = centries.map(function (e) { return barRow(e.label, e.val, cmax, true); }).join("");
+  }
+  function renderStats() {
+    var done = CATS.filter(function (c) { return c.tnr === "done"; }).length;
+    var ear = CATS.filter(function (c) { return c.earTip; }).length;
+    var zones = Object.keys(ZONES).filter(function (k) { return CATS.some(function (c) { return c.zone === k; }); }).length;
+    $("#statTotal").textContent = CATS.length;
+    $("#statDone").textContent = done;
+    $("#statZones").textContent = zones;
+    $("#tnrDone").textContent = done;
+    $("#tnrTotal").textContent = CATS.length;
+    $("#earTip").textContent = ear;
+    $("#tnrFill").style.width = Math.round((done / CATS.length) * 100) + "%";
+    $("#tnrPct").textContent = Math.round((done / CATS.length) * 100) + "%";
+    $("#updated").textContent = "数据更新于 " + DATA.meta.updated;
+  }
+
+  function renderFeatured() {
+    var cat = CATS.filter(function (c) { return c.id === "daju"; })[0] || CATS[0];
+    var tags = (cat.traits || []).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+    $("#featured").innerHTML =
+      '<div class="featured">' +
+      '<div class="fav-band"><span>今日明星猫 · FEATURED</span><span>No.' + pad3(cat.n) + '</span></div>' +
+      '<div class="avatar">' + avatar(cat) + '</div>' +
+      '<div class="fbody">' +
+      '<h3 class="fname">' + esc(cat.name) + '</h3>' +
+      '<p class="fmeta">' + esc(COATS[cat.coat].label) + " · " + esc(ZONES[cat.zone]) + " · " + FRIEND[cat.friend].label + " · " + TNR[cat.tnr] + '</p>' +
+      '<div class="ftags">' + tags + '</div>' +
+      '<p class="fnote">' + esc(cat.note) + '</p>' +
+      '</div></div>';
+  }
+
+  /* -------- events -------- */
+  function bind() {
+    $("#console").addEventListener("click", function (e) {
+      var chip = e.target.closest(".chip");
+      if (chip) {
+        var g = chip.getAttribute("data-group"), v = chip.getAttribute("data-v");
+        if (state[g].has(v)) state[g].delete(v); else state[g].add(v);
+        chip.setAttribute("aria-pressed", state[g].has(v) ? "true" : "false");
+        renderGrid();
+        return;
+      }
+      if (e.target.closest("#reset")) {
+        state.coat.clear(); state.zone.clear(); state.friend.clear(); state.tnr.clear();
+        state.q = ""; state.sort = "default";
+        var q = $("#q"); if (q) q.value = "";
+        var s = $("#sort"); if (s) s.value = "default";
+        Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (el) { el.setAttribute("aria-pressed", "false"); });
+        renderGrid();
+      }
+    });
+    $("#console").addEventListener("input", function (e) {
+      if (e.target.id === "q") { state.q = e.target.value; renderGrid(); }
+    });
+    $("#console").addEventListener("change", function (e) {
+      if (e.target.id === "sort") { state.sort = e.target.value; renderGrid(); }
+    });
+    $("#grid").addEventListener("click", function (e) {
+      var cardEl = e.target.closest(".cat-card");
+      if (cardEl) openModal(cardEl.getAttribute("data-id"));
+    });
+    $("#grid").addEventListener("keydown", function (e) {
+      if ((e.key === "Enter" || e.key === " ") && e.target.closest(".cat-card")) {
+        e.preventDefault();
+        openModal(e.target.closest(".cat-card").getAttribute("data-id"));
+      }
+    });
+    $("#modal").addEventListener("click", function (e) {
+      if (e.target.id === "modal" || e.target.closest("#modalClose")) closeModal();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeModal();
+    });
+  }
+
+  renderConsole();
+  renderFeatured();
+  renderStats();
+  renderCharts();
+  renderGrid();
+  bind();
+})();
+
+</script>
+</body>
+</html>

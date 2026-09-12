@@ -228,6 +228,15 @@ ul{margin:0;padding:0;list-style:none}
   .field-grid{grid-template-columns:1fr}
 }
 
+
+/* ---- merged tab switch ---- */
+.app-tabs{display:flex;gap:10px;align-items:center}
+.app-tabs button{font-family:inherit;font-weight:800;font-size:14px;padding:8px 14px;border:2px solid #000;background:#fff;cursor:pointer;box-shadow:3px 3px 0 #000;border-radius:6px}
+.app-tabs button.active{background:#ffd43b;box-shadow:3px 3px 0 #000;transform:translate(1px,1px)}
+.moments-wrap{display:none}
+.moments-wrap.on{display:block}
+.moments-frame{width:100%;min-height:calc(100vh - 140px);border:2px solid #000;border-radius:10px;box-shadow:6px 6px 0 #000;background:#fffaf0}
+body.moments-mode main > section.guide-only{display:none}
 </style>
 </head>
 <body>
@@ -240,6 +249,10 @@ ul{margin:0;padding:0;list-style:none}
       佛大猫档案
     </a>
     <nav class="nav-links" aria-label="主导航">
+      <span class="app-tabs" role="tablist">
+        <button type="button" id="tabGuide" class="active" aria-selected="true">🐱 猫咪图鉴</button>
+        <button type="button" id="tabMoments" aria-selected="false">💬 喵友圈</button>
+      </span>
       <a href="#catalog">图鉴检索</a>
       <a href="#zones">分布统计</a>
       <a href="#about">关于项目</a>
@@ -249,7 +262,12 @@ ul{margin:0;padding:0;list-style:none}
 </header>
 
 <main>
-  <section class="hero" id="top">
+  <section class="moments-wrap" id="momentsSection" aria-label="喵友圈">
+    <div class="container" style="padding-top:18px">
+      <iframe class="moments-frame" id="momentsFrame" title="喵友圈" loading="lazy"></iframe>
+    </div>
+  </section>
+  <section class="hero guide-only" id="top">
     <div class="container hero-grid">
       <div>
         <span class="eyebrow">佛山大学 · 校园猫互助社群</span>
@@ -269,7 +287,7 @@ ul{margin:0;padding:0;list-style:none}
     </div>
   </section>
 
-  <section class="section" id="catalog">
+  <section class="section guide-only" id="catalog">
     <div class="container">
       <div class="sec-head">
         <div>
@@ -288,7 +306,7 @@ ul{margin:0;padding:0;list-style:none}
     </div>
   </section>
 
-  <section class="section" id="zones">
+  <section class="section guide-only" id="zones">
     <div class="container">
       <div class="sec-head">
         <div>
@@ -308,7 +326,7 @@ ul{margin:0;padding:0;list-style:none}
     </div>
   </section>
 
-  <section class="section" id="about">
+  <section class="section guide-only" id="about">
     <div class="container about-grid">
       <div>
         <span class="eyebrow">关于这份图鉴</span>
@@ -685,6 +703,24 @@ window.CATALOG = {
   bind();
 })();
 
+</script>
+
+<script>
+(function(){
+  var tg=document.getElementById('tabGuide'),tm=document.getElementById('tabMoments'),
+      ms=document.getElementById('momentsSection'),fr=document.getElementById('momentsFrame');
+  function show(which){
+    var m=which==='moments';
+    document.body.classList.toggle('moments-mode',m);
+    ms.classList.toggle('on',m);
+    tg.classList.toggle('active',!m); tg.setAttribute('aria-selected',String(!m));
+    tm.classList.toggle('active',m);  tm.setAttribute('aria-selected',String(m));
+    if(m&&!fr.src) fr.src='moments.html?v='+Date.now();
+    if(m) window.scrollTo({top:0});
+  }
+  tg.addEventListener('click',function(){show('guide')});
+  tm.addEventListener('click',function(){show('moments')});
+})();
 </script>
 </body>
 </html>
